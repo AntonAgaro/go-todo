@@ -2,17 +2,28 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"net/http"
+	"github.com/joho/godotenv"
+	"go-todo/config"
+	"go-todo/routes"
+	"log"
 )
 
+//TODO
+// dsn, createTodo
+
 func main() {
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	config.ConnectDB()
+
 	r := gin.Default()
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
-	err := r.Run(":8080")
+	routes.RegisterRotes(r)
+
+	err = r.Run(":8080")
 	if err != nil {
 		return
 	}
